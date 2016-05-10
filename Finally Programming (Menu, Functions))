@@ -1,0 +1,74 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#include "windows.h"
+#include <stdlib.h>
+using namespace std;
+
+float area_cuadrado (float l);
+void potencia (float x, int y, float &z);
+int MCD (int a, int b);
+
+void main()
+{
+	int opcion, a, b, y, R3;
+	float l, x, z, R1;
+	system ("color 8C");
+	do{
+		cout<< "- - - - - Menu - - - - -"<<endl;
+		cout<<" 1. Area del cuadrado "<<endl;
+		cout<<" 2. Calcular la Potencia "<<endl;
+		cout<<" 3. MCD "<<endl;
+		cout<<" 0. Salir "<<endl;
+		cout<<" Ingrese lo que desea realizar "<<endl;
+		cin>>opcion;
+	
+	
+	switch(opcion){
+	case 1: {cout<< "Ingrese la longtid de un lado: "<<endl;
+				cin>>l;
+				R1 = area_cuadrado(l);
+				cout<< "El area del cuadrado es: "<<R1<<endl;
+				break;}
+		case 2: {cout<< "Ingrese un numero: "<<endl;
+				cin>>x;
+				cout<< "Ingrese un exponente: "<<endl;
+				cin>>y;
+				potencia(x,y,z);
+				cout<< "El resultado de las potencias es: "<<z<<endl;
+				break;}
+		case 3: {cout<< "Ingrese un numero: "<<endl;
+				cin>>a;
+				cout<< "Ingrese el segundo numero: "<<endl;
+				cin>>b;
+				R3=MCD(a,b);
+				cout<< "El MCD de los numeros es: "<<R3<<endl;
+				break;}
+		case 0: {cout<< "Ha decidio salir del programa, Hasta Luego "<<endl;
+				break;}
+		default:{cout<< "Opcion Invalida, digite otro numero"<<endl;
+				}
+			}
+		}while (opcion>3 && opcion<0);
+	getch();
+}
+
+	float area_cuadrado (float l)
+	{
+		float R1;
+		R1=(l*l);
+		return (R1);
+	}
+
+	void potencia (float x, int y, float &z)
+	{
+		z=1;
+		for(int i=1; i<=y; i++)
+			z=z*x;
+	}
+
+	int MCD (int a, int b)
+	{
+		if (a>b) swap (a,b);
+		return (b==0)?a:MCD(a,a%b);
+	}

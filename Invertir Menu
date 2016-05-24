@@ -1,0 +1,77 @@
+#include "stdafx.h"
+#include <iostream>
+#include "conio.h"
+#define Max 10
+using namespace std;
+
+void cargar(double a[], int tam);
+void mostrar(double a[], int tam);
+void invertir(double a[], int tam);
+
+void main ()
+{
+	int tam, n, opcion;
+	double Invertir[Max];
+	system ("color 5D");
+		do{
+		cout<< "- - - - - Menu - - - - -"<<endl;
+		cout<<" 1. Cargar"<<endl;
+		cout<<" 2. Invertir y Mostrar"<<endl;
+		cout<<" 0. Salir "<<endl;
+		cout<<" Ingrese lo que desea realizar "<<endl;
+		cin>>opcion;
+
+	switch(opcion)
+		{
+	case 1: { 
+			do{
+				cout<< "Ingrese la cantidad de numeros que desea en el vector: "<<endl;
+				cin>> n;
+			}while((n<=0)||(n>Max));
+			cargar (Invertir,n);
+			break;}
+	case 2: {
+			invertir (Invertir,n);
+			mostrar (Invertir,n);
+			break;}
+	case 0: {
+			cout<< "Ha decidio salir del programa, Hasta Luego "<<endl;
+			break;}
+	default:{
+			cout<< "Opcion Invalida, digite otro numero"<<endl;
+			}
+		}
+	system ("cls");
+	}while(opcion<0 || opcion>2);	
+getch();
+}
+
+void cargar (double a[], int tam)
+{
+	for(int i=0;i<tam;i++)
+	{   
+		do{
+			cout<<"a["<<i<<"]= ";
+			cin>> a[i];
+		}while (a[i]<0);
+	}
+}
+
+void invertir (double a[], int tam)
+{
+	for (int i=0 ; i < (tam/2) ; i++)
+	{
+		int temp = a[i];
+		a[i] = a[tam-i-1];
+		a[tam-i-1] = temp;
+
+	}
+}
+
+void mostrar ( double a[],int tam)
+{
+	cout<<"El vector invertido es: "<<endl;
+	for(int i=0;i<tam;i++)
+		cout<<"a["<<i<<"]= "<<a[i]<<endl;
+	getch();
+}

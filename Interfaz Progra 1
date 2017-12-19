@@ -1,0 +1,291 @@
+#pragma once
+#include "Memoria.h"
+#include "ArbolBinario.h"
+#include "ArbolBinarioEDE.h"
+using namespace System::Windows::Forms;
+template<class tipo>
+class Interfaz :public Memoria<tipo>
+{
+public:
+	Interfaz() {}
+	void Tamgrid(DataGridView^a, TextBox^b)
+	{
+		a->ColumnCount = Convert::ToInt32(b->Text);
+		a->RowCount = 1;
+		for (int i = 0; i < a->ColumnCount; i++)
+		{
+			a->Columns[i]->Width = 30;
+		}
+	}
+	void Grid_Memoria(DataGridView^a, TextBox^b)
+	{
+		Nodo<tipo>aux;
+		this->Columna(Convert::ToInt32(b->Text));
+		for (int i = 0; i < this->Columna(); i++)
+		{
+			aux.Elemento(Convert::ToInt32(a->Rows[0]->Cells[i]->Value));
+			this->Arreglo(aux, 0, i);
+		}
+	}
+	void Memoria_Grid(DataGridView^a)
+	{
+		a->ColumnCount = this->Columna();
+		a->RowCount = 1;
+		for (int i = 0; i < this->Columna(); i++)
+		{
+			a->Columns[i]->Width = 30;
+			a->Rows[0]->Cells[i]->Value = Convert::ToString(this->Arreglo(0, i).Elemento());
+		}
+	}
+	void Arbol_Memoria(ArbolBinario<tipo> Arbol)//Esta funcion llena la matriz de memoria de la interfaz
+	{
+		Nodo<int> Dato, Posicion, DatoCola;//La variable dato nos servira para ingresar los datos a nuestra matriz
+		Cola<int> Cola1;
+		int NivelAnterior = 0, NivelActual = 0, NivelProximo = NivelActual + 1, Columna = 0, Hoja = 0;
+		Posicion.Elemento(Arbol.Raiz());
+		Dato.Elemento(Arbol.Arbol(Posicion.Elemento()).Elemento());
+		Dato.ApuntadorSuperiorEst(2);//La raiz principal siempre tendra un dos de apuntador superior
+		Dato.Nivel(0);
+		Dato.Hoja(1);//El cero simboliza 1 una hoja
+		Dato.ApuntadorInferiorEst(1);
+		this->Arreglo(Dato, 0, 0);//Esa casilla siempre sera de la raiz principal por lo tanto en esa fila sera el unico elemento
+		//Los Izquierdos tendran 1 y los derechos tendran 0
+		int op = 1;
+		Posicion.Nivel(0);
+		int NivelAux = Posicion.Nivel();
+
+
+		int NumeroHoja = 1;
+		do
+		{
+			if (NivelAux != Posicion.Nivel() && op == 2)//Cuando toca otro nivel
+			{
+				Columna = 0;
+				NumeroHoja = 1;
+			}
+
+			if (op == 2)
+			{
+
+				Dato.Elemento(Arbol.Arbol(Posicion.Elemento()).Elemento());//Guardamos el elemento que esta en la posicion que eliminamos de la cola
+				Dato.ApuntadorSuperiorEst(Posicion.ApuntadorSuperiorEst());
+				Dato.Hoja(Columna + 1);
+				Dato.Nivel(Posicion.Nivel());
+				
+				this->Arreglo(Dato, Dato.Nivel(), Columna);
+
+				Columna++;
+
+			}
+			if (Arbol.Arbol(Posicion.Elemento()).Apuntador_IzquierdoEst() != -1)
+			{
+				DatoCola.Elemento(Arbol.Arbol(Posicion.Elemento()).Apuntador_IzquierdoEst());//Guardamos en la cola la direccion de memoria de los elementos del arbol
+				DatoCola.Nivel(1 + Posicion.Nivel());
+				DatoCola.ApuntadorSuperiorEst(1);
+				Cola1.Insertar(DatoCola);
+				
+			}
+			if (Arbol.Arbol(Posicion.Elemento()).ApuntadorEst() != -1)
+			{
+				DatoCola.Elemento(Arbol.Arbol(Posicion.Elemento()).ApuntadorEst());//Guardamos en la cola la direccion de memoria de los elementos del arbol
+				DatoCola.Nivel(1 + Posicion.Nivel());
+				DatoCola.ApuntadorSuperiorEst(0);
+			    Cola1.Insertar(DatoCola);
+				
+			}
+			if (op == 1) NivelAux = 1 + Posicion.Nivel();
+			if (op == 2) NivelAux = Posicion.Nivel();
+			op = 2;
+
+			
+		} while (Cola1.Extraer(Posicion));
+
+
+		this->Columna(20);
+		this->Fila(10);
+
+
+	}
+	void ArbolEnlazado_Memoria(ArbolBinarioEDE<tipo> Arbol)
+	{
+		Nodo<int> Dato, Posicion, DatoCola;//La variable dato nos servira para ingresar los datos a nuestra matriz
+		Cola<int> Cola1;
+		int NivelAnterior = 0, NivelActual = 0, NivelProximo = NivelActual + 1, Columna = 0, Hoja = 0;
+		Posicion.Elemento(Arbol.Raiz());
+		Dato.Elemento(Arbol.Arbol(Posicion.Elemento()).Elemento());
+		Dato.ApuntadorSuperiorEst(2);//La raiz principal siempre tendra un dos de apuntador superior
+		Dato.Nivel(0);
+		Dato.Hoja(1);//El cero simboliza 1 una hoja
+		this->Arreglo(Dato, 0, 0);//Esa casilla siempre sera de la raiz principal por lo tanto en esa fila sera el unico elemento
+
+		int op = 1;
+		Posicion.Nivel(0);
+		int NivelAux = Posicion.Nivel();
+
+
+
+		do
+		{
+			if (NivelAux != Posicion.Nivel() && op == 2)
+			{
+				Columna = 0;
+			}
+
+			if (op == 2)
+			{
+
+				Dato.Elemento(Arbol.Arbol(Posicion.Elemento()).Elemento());//Guardamos el elemento que esta en la posicion que eliminamos de la cola
+				Dato.ApuntadorSuperiorEst(Posicion.ApuntadorSuperiorEst());
+				Dato.Hoja(Columna + 1);
+				Dato.Nivel(Posicion.Nivel());
+				this->Arreglo(Dato, Dato.Nivel(), Columna);
+
+				Columna++;
+
+			}
+			if (Arbol.Arbol(Posicion.Elemento()).Apuntador_IzquierdoEst() != 0)
+			{
+				DatoCola.Elemento(Arbol.Arbol(Posicion.Elemento()).Apuntador_IzquierdoEst());//Guardamos en la cola la direccion de memoria de los elementos del arbol
+				DatoCola.Nivel(1 + Posicion.Nivel());
+				DatoCola.ApuntadorSuperiorEst(1);
+
+				Cola1.Insertar(DatoCola);
+			}
+			if (Arbol.Arbol(Posicion.Elemento()).ApuntadorEst() > 0)
+			{
+				DatoCola.Elemento(Arbol.Arbol(Posicion.Elemento()).ApuntadorEst());//Guardamos en la cola la direccion de memoria de los elementos del arbol
+				DatoCola.Nivel(1 + Posicion.Nivel());
+				DatoCola.ApuntadorSuperiorEst(0);
+				Cola1.Insertar(DatoCola);
+			}
+			if (op == 1) NivelAux = 1 + Posicion.Nivel();
+			if (op == 2) NivelAux = Posicion.Nivel();
+			op = 2;
+
+
+		} while (Cola1.Extraer(Posicion));
+
+
+		this->Columna(20);
+		this->Fila(10);
+
+
+
+
+	}
+
+	void MemoriaGrilla(DataGridView^a)
+	{
+		Nodo<tipo> Dato;
+		Memoria<int> X;
+		X = this->ThisM();
+
+		int y = this->NumeroNiveles(X);
+
+		
+		int Multiplicador = 1;
+		for(int i=0;i<y-1;i++)
+		{
+			Multiplicador = Multiplicador * 2 + 1;
+			
+		}
+		a->ColumnCount = Multiplicador;
+		a->RowCount = y;
+
+		for (int i = 0; i < a->ColumnCount; i++)
+		{
+
+			a->Columns[i]->Width = 30;
+
+		}
+
+		int ConstanteEspacio = 1;
+		int Lado = 1;//Lo inicializamos en 1 porque siempre vamos a empezar
+		//Tenemos que llenar el data grid view de abajo para arriba
+		//Nuestra matriz tambien tiene que estar contada de abajo para arriba
+		//La variabl j marcara el empiezo de la columna a la cual se va a introducir el primer dato de cada nivel
+		int j = 1;
+		int M = 0;
+		int op = 1;
+		int x = a->ColumnCount;
+	int	NumeroHoja = 1;
+		int Comienzo = 0;
+		int i = y;//I toma el valor del nuero de niveles que coincide con el numero de filas de nuestra matriz
+		while (i != 1)//Mientras sea distinto al valor de i cuando se haya impreso todas las filas y columnas de la matriz en la grilla
+		{
+			M = 0;
+			if (op == 1) j = 0;
+			if (op == 2) j =Comienzo;
+			while (j < x)
+			{
+				Nodo<int> Aux;
+				Aux = this->Arreglo(i-1, M);
+				if (Aux.Elemento() == -9991) break;
+				if (Aux.ApuntadorSuperiorEst() == Lado)
+				{
+					a->Rows[i - 1]->Cells[j]->Value = System::Convert::ToString(Aux.Elemento());
+					j++;
+					M++;
+					//Cada Vez que imprime, tenemos que poner los espacios
+					for (int c = 0; c < ConstanteEspacio && j < x; c++)
+					{
+						a->Rows[i - 1]->Cells[j]->Value = "  ";
+						j++;
+					}
+					if (Aux.ApuntadorSuperiorEst() == 1) Lado = 0;
+					if (Aux.ApuntadorSuperiorEst() == 0) Lado = 1;
+				}
+				else
+				{
+					for (int c = 0; c <= ConstanteEspacio && j < x; c++)
+					{
+						a->Rows[i - 1]->Cells[j]->Value = "  ";
+						j++;
+					}
+
+					if (Aux.ApuntadorSuperiorEst() == 1) Lado = 1;
+					if (Aux.ApuntadorSuperiorEst() == 0) Lado = 0;
+
+					
+				}
+				NumeroHoja++;
+			}
+			Comienzo=ConstanteEspacio;
+			op = 2;
+			ConstanteEspacio = ConstanteEspacio * 2 + 1;
+			i--;
+			Lado = 1;
+			NumeroHoja = 1;
+		}
+		Nodo<tipo> Aux = this->Arreglo(0, 0);
+		
+		a->Rows[0]->Cells[(a->ColumnCount-1)/2]->Value = System::Convert::ToString(Aux.Elemento());
+
+
+
+	}
+
+	int NumeroNiveles(Memoria<tipo> x)
+	{
+		int NV=0;
+		Nodo<tipo> Aux;
+		for(int i=0;i<20;i++)
+		{
+			Aux.Elemento(x.Arreglo(i,0).Elemento());
+			if(Aux.Elemento()!=0)
+			{
+				NV++;
+				
+			}
+			else
+			{
+				break;
+			}
+
+		}
+
+		return NV;
+	}
+	~Interfaz(){}
+};
+
